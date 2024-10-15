@@ -37,7 +37,7 @@ jspm_packages/
 *.tgz
 
 # dotenv environment variables file
-.env
+# .env
 
 # Visual Studio Code files
 .vscode/

@@ -12,7 +12,7 @@ const logger = pino({
   level: "info",
   prettyPrint: { colorize: true },
   transport: {
-    target: "pino-pretty",
+    // target: "prettyPrint",
     options: { destination: "./logs/app.log", colorizeOptions },
   },
 });
