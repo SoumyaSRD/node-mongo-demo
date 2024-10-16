@@ -18,7 +18,6 @@
     "express": "^4.21.1",
     "joi": "^17.13.3",
     "lodash": "^4.17.21",
-    "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "nodemongodemo": "file:",
     "passport": "^0.7.0",
