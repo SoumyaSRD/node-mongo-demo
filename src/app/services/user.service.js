@@ -17,6 +17,11 @@ module.exports.createUser = async (user) => {
   return await saveUser.save();
 };
 
+module.exports.updateUser = async (user) => {
+  updateUser = new User(user);
+  return await updateUser.findByIdAndUpdate(user.id, user);
+};
+
 module.exports.findUser = async (user) => {
   return await User.findOne({
     $or: [{ phone: user.phone }, { email: user.email }],

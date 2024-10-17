@@ -12,7 +12,7 @@ module.exports.findAllUser = async (req, res, next) => {
     });
   } catch (error) {
     return res.json({
-      statusCode: 400,
+      statusCode: 500,
       error,
       error: "User fetching issue",
     });
@@ -31,7 +31,7 @@ module.exports.findUserById = async (req, res, next) => {
     console.log(error);
 
     res.json({
-      statusCode: 400,
+      statusCode: 500,
       error,
       error: "User fetching issue",
     });
@@ -50,7 +50,7 @@ module.exports.findUserByEmail = async (req, res, next) => {
     console.log(error);
 
     res.json({
-      statusCode: 400,
+      statusCode: 500,
       error,
       error: "User fetching issue",
     });
@@ -86,31 +86,20 @@ module.exports.createUser = async (req, res, next) => {
     });
   }
 };
-
 module.exports.updateUser = async (req, res, next) => {
   try {
     const user = new IUser(req.body);
-    let existUser = await UserService.findUserById(user.id);
-    console.log("existUser", existUser);
-
-    if (!existUser) {
-      return res.json({
-        statusCode: 409,
-        message: `${user.name} User does not exists`,
-      });
-    }
-
-    const data = await UserService.createUser(user);
+    const data = await UserService.updateUser(user);
     return res.json({
       statusCode: 200,
       data,
-      message: "User created successfully",
+      message: "User uodated successfully",
     });
   } catch (error) {
     return res.json({
-      statusCode: 400,
+      statusCode: 500,
       error,
-      error: "User creation failed",
+      error: "User updation failed",
     });
   }
 };
