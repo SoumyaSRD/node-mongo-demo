@@ -86,6 +86,7 @@ module.exports.createUser = async (req, res, next) => {
     });
   }
 };
+
 module.exports.updateUser = async (req, res, next) => {
   try {
     const user = new IUser(req.body);
@@ -93,13 +94,41 @@ module.exports.updateUser = async (req, res, next) => {
     return res.json({
       statusCode: 200,
       data,
-      message: "User uodated successfully",
+      message: "User updated successfully",
     });
   } catch (error) {
     return res.json({
       statusCode: 500,
       error,
       error: "User updation failed",
+    });
+  }
+};
+
+module.exports.deleteUser = async (req, res, next) => {
+  try {
+    console.log(req.params);
+
+    const _id = req.params.id;
+    const data = await UserService.deleteUser(_id);
+    if (data) {
+      return res.json({
+        statusCode: 200,
+        data,
+        message: "User deleted successfully",
+      });
+    } else {
+      return res.json({
+        statusCode: 404,
+        data,
+        message: "User does not exist",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      statusCode: 500,
+      error,
+      error: "User deletion failed",
     });
   }
 };

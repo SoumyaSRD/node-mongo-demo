@@ -19,11 +19,16 @@ module.exports.createUser = async (user) => {
 
 module.exports.updateUser = async (user) => {
   updateUser = new User(user);
-  return await updateUser.findByIdAndUpdate(user.id, user);
+  return await updateUser.findByIdAndUpdate(user._id, user);
 };
 
 module.exports.findUser = async (user) => {
   return await User.findOne({
     $or: [{ phone: user.phone }, { email: user.email }],
   });
+};
+
+module.exports.deleteUser = async (_id) => {
+  console.log(_id);
+  return await User.findByIdAndDelete(_id);
 };
