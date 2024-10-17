@@ -9,6 +9,7 @@ const start = require("../config/db.config");
 const setupSwaggerDocs = require("../middlewares/swagger/swagger.middleware");
 
 const userRoutes = require(`../routes/user.routes`);
+const authRoutes = require(`../routes/auth.routes`);
 
 app.use(express.json());
 
@@ -21,6 +22,7 @@ setupSwaggerDocs(app);
 start();
 
 app.use("/user", userRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
