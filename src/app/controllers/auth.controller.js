@@ -50,12 +50,16 @@ module.exports.login = async (req, res) => {
 
   const token = createSecretToken(user._id);
   res.cookie("token", token, {
-    domain: process.env.frontend_url, // Set your domain here
+    //maxAge: 900000, // Cookie expires in 15 minutes
+    httpOnly: false, // Make it accessible to client-side code
+    secure: false, // Set to true if using HTTPS
+    sameSite: "Lax",
+    // domain: "localhost:3000", // Set your domain here
     path: "/", // Cookie is accessible from all paths
     expires: new Date(Date.now() + 86400000), // Cookie expires in 1 day
-    secure: true, // Cookie will only be sent over HTTPS
-    httpOnly: true, // Cookie cannot be accessed via client-side scripts
-    sameSite: "None",
+    // secure: true, // Cookie will only be sent over HTTPS
+    // httpOnly: false, // Cookie cannot be accessed via client-side scripts
+    // sameSite: "None",
   });
 
   return res
