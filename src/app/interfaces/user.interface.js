@@ -7,5 +7,6 @@ module.exports = class IUser {
     this.phone = user.phone;
     this.age = user.age;
     this.address = user.address;
+    this.type = user.type || "USER";
   }
 };

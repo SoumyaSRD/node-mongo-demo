@@ -28,8 +28,6 @@ module.exports.findUserById = async (req, res, next) => {
       message: "User fetched successfully",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       error,
       error: "User fetching issue",
@@ -45,44 +43,9 @@ module.exports.findUserByEmail = async (req, res, next) => {
       message: "User fetched successfully",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       error,
       error: "User fetching issue",
-    });
-  }
-};
-
-module.exports.createUser = async (req, res, next) => {
-  try {
-    const user = new IUser(req.body);
-
-    const hashedPassword = await bcrypt.hash(req.body.password, +SALT);
-    user.password = hashedPassword;
-    let existUser = await UserService.findUser(user);
-
-    if (existUser) {
-      return res.status(500).json({
-        statusCode: 409,
-        message: `${user.name} User already exists`,
-      });
-    }
-
-    const data = await UserService.createUser(user);
-    if (data) {
-      delete data.password;
-      return res.status(200).json({
-        data,
-        message: "User created successfully",
-      });
-    }
-  } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      error,
-      error: "User creation failed",
     });
   }
 };
@@ -105,8 +68,6 @@ module.exports.updateUser = async (req, res, next) => {
 
 module.exports.deleteUser = async (req, res, next) => {
   try {
-    console.log(req.params);
-
     const _id = req.params.id;
     const data = await UserService.deleteUser(_id);
     if (data) {

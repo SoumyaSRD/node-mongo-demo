@@ -7,3 +7,13 @@ module.exports.findUserWithPassword = async (user) => {
     .select("+password")
     .exec();
 };
+
+module.exports.createUser = async (user) => {
+  const newUser = new User(user);
+  await newUser.save();
+
+  // Exclude password before sending user data
+  const { password, ...userWithoutPassword } = newUser.toObject();
+  console.log("User created:", userWithoutPassword);
+  return userWithoutPassword;
+};

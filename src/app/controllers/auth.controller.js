@@ -1,22 +1,52 @@
+const { SALT } = require("../../config/keys");
 const { createSecretToken } = require("../../middlewares/auth/auth.middleware");
-const { findUserWithPassword } = require("../services/auth.service");
+const IUser = require("../interfaces/user.interface");
+const AuthService = require("../services/auth.service");
 const bcrypt = require("bcrypt");
+
+module.exports.createUser = async (req, res, next) => {
+  try {
+    const user = new IUser(req.body);
+
+    const hashedPassword = await bcrypt.hash(req.body.password, +SALT);
+    user.password = hashedPassword;
+
+    let existUser = await AuthService.findUserWithPassword(user);
+
+    if (existUser) {
+      return res.status(409).json({
+        statusCode: 409,
+        message: `User already exists`,
+      });
+    }
+
+    let data = await AuthService.createUser(user);
+    if (data) {
+      return res.status(200).json({
+        statusCode: 200,
+        data,
+        message: "User registered successfully",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      statusCode: 500,
+      error,
+      message: "User registration failed",
+    });
+  }
+};
 
 module.exports.login = async (req, res) => {
   const { email, phone, password } = req.body;
   if (!((email || phone) && password)) {
     return res.status(400).json({ message: "All input is required" });
   }
-  const user = await findUserWithPassword({ email, phone });
+  const user = await AuthService.findUserWithPassword({ email, phone });
 
   if (!(user && (await bcrypt.compare(password, user.password)))) {
-    console.log(
-      ">>>" < user && (await bcrypt.compare(password, user.password))
-    );
-
     return res.status(404).json({ message: "Invalid credentials" });
   }
-  console.log(">>>>>");
 
   const token = createSecretToken(user._id);
   res.cookie("token", token, {
