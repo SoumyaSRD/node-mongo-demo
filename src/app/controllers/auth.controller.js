@@ -62,3 +62,14 @@ module.exports.login = async (req, res) => {
     .status(200)
     .json({ message: "User logged in successfully.", data: token });
 };
+
+module.exports.logout = async (req, res) => {
+  const cookies = req.cookies;
+  for (let cookie in cookies) {
+    res.clearCookie(cookie);
+  }
+
+  return res
+    .status(200)
+    .json({ message: "User logged out successfully.", data: null });
+};
