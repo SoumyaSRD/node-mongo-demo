@@ -8,13 +8,11 @@ const start = require("../config/db.config");
 
 const setupSwaggerDocs = require("../middlewares/swagger/swagger.middleware");
 
-const userRoutes = require(`../routes/user.routes`);
-
-const authRoutes = require(`../routes/auth.routes`);
-
-const sseRoutes = require(`../routes/sse.routes`);
-
 const cors = require(`cors`);
+
+const DefaultRouter = require(`../routes/default.routes`);
+
+const errorHandler = require("./helpers/dbErrors.hepler");
 
 const corsOptions = {
   origin: "*", // Allow only this origin,
@@ -34,13 +32,8 @@ setupSwaggerDocs(app);
 
 start();
 
-app.use("/auth", authRoutes);
+app.use("/", DefaultRouter);
 
-app.use("/user", userRoutes);
-app.use("/events", sseRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+app.use(errorHandler);
 
 module.exports = app;

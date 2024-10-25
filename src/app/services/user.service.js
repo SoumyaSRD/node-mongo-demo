@@ -28,5 +28,14 @@ module.exports.deleteUser = async (_id) => {
   return await User.findByIdAndDelete(_id);
 };
 
-module.exports.filterUser = (searchParams, page, limit) =>
-  dynamicSearch(User, searchParams, page, limit);
+module.exports.filterUser = (searchParams, page, limit) => {
+  let lookUps = [
+    {
+      from: "department",
+      localField: "departments",
+      foreignField: "_id",
+      as: "departments",
+    },
+  ];
+  return dynamicSearch(User, searchParams, page, limit, {}, lookUps); // Added empty object for caseSensitiveData
+};

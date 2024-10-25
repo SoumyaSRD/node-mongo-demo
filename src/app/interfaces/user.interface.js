@@ -8,5 +8,6 @@ module.exports = class IUser {
     this.age = user.age;
     this.address = user.address;
     this.type = user.type || "USER";
+    this.departments = user.departments;
   }
 };

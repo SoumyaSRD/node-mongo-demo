@@ -22,10 +22,7 @@ module.exports.findAllUser = async (req, res, next) => {
       message: "User fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      error,
-      error: "User fetching issue",
-    });
+    next(error);
   }
 };
 
@@ -37,10 +34,7 @@ module.exports.findUserById = async (req, res, next) => {
       message: "User fetched successfully",
     });
   } catch (error) {
-    res.status(500).json({
-      error,
-      error: "User fetching issue",
-    });
+    next(error);
   }
 };
 
@@ -52,10 +46,7 @@ module.exports.findUserByEmail = async (req, res, next) => {
       message: "User fetched successfully",
     });
   } catch (error) {
-    res.status(500).json({
-      error,
-      error: "User fetching issue",
-    });
+    next(error);
   }
 };
 
@@ -68,10 +59,7 @@ module.exports.updateUser = async (req, res, next) => {
       message: "User updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      error,
-      error: "User updation failed",
-    });
+    next(error);
   }
 };
 
@@ -79,22 +67,13 @@ module.exports.deleteUser = async (req, res, next) => {
   try {
     const _id = req.params.id;
     const data = await UserService.deleteUser(_id);
-    if (data) {
-      return res.status(200).json({
-        data,
-        message: "User deleted successfully",
-      });
-    } else {
-      return res.status(404).json({
-        data,
-        message: "User does not exist",
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
-      error,
-      error: "User deletion failed",
+
+    return res.status(200).json({
+      data,
+      message: "User deleted successfully",
     });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -116,10 +95,7 @@ module.exports.upload = async (req, res, next) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      error,
-      error: "User deletion failed",
-    });
+    next(error);
   }
 };
 
@@ -142,9 +118,6 @@ module.exports.filterUser = async (req, res, next) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      error,
-      error: "Unable to find User",
-    });
+    next(error);
   }
 };

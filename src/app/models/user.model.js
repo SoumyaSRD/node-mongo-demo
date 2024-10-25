@@ -9,9 +9,15 @@ const userScema = mongoose.Schema(
     type: { type: String, required: true },
     age: { type: Number, required: false },
     address: { type: String, required: false },
+    departments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department", // Reference to the Post model
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("user", userScema, "user");
+const User = mongoose.model("User", userScema, "user");
 module.exports = User;

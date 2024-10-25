@@ -11,60 +11,59 @@ module.exports.createUser = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(req.body.password, +SALT);
     user.password = hashedPassword;
 
-    let existUser = await AuthService.findUserWithPassword(user);
+    // let existUser = await AuthService.findUserWithPassword(user);
 
-    if (existUser) {
-      return res.status(409).json({
-        statusCode: 409,
-        message: `User already exists`,
-      });
-    }
+    // if (existUser) {
+    //   return res.status(409).json({
+    //     statusCode: 409,
+    //     message: `User already exists`,
+    //   });
+    // }
 
     let data = await AuthService.createUser(user);
-    if (data) {
-      return res.status(200).json({
-        statusCode: 200,
-        data,
-        message: "User registered successfully",
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
-      statusCode: 500,
-      error,
-      message: "User registration failed",
+
+    return res.status(200).json({
+      statusCode: 200,
+      data,
+      message: "User registered successfully",
     });
+  } catch (error) {
+    next(error);
   }
 };
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
   const { email, phone, password } = req.body;
-  if (!((email || phone) && password)) {
-    return res.status(400).json({ message: "All input is required" });
+  try {
+    if (!((email || phone) && password)) {
+      return res.status(400).json({ message: "All input is required" });
+    }
+    const user = await AuthService.findUserWithPassword({ email, phone });
+
+    if (!(user && (await bcrypt.compare(password, user.password)))) {
+      return res.status(404).json({ message: "Invalid credentials" });
+    }
+
+    const token = createSecretToken(user._id);
+    res.cookie("token", token, {
+      //maxAge: 900000, // Cookie expires in 15 minutes
+      httpOnly: false, // Make it accessible to client-side code
+      secure: false, // Set to true if using HTTPS
+      sameSite: "Lax",
+      // domain: "localhost:3000", // Set your domain here
+      path: "/", // Cookie is accessible from all paths
+      expires: new Date(Date.now() + 86400000), // Cookie expires in 1 day
+      // secure: true, // Cookie will only be sent over HTTPS
+      // httpOnly: false, // Cookie cannot be accessed via client-side scripts
+      // sameSite: "None",
+    });
+
+    return res
+      .status(200)
+      .json({ message: "User logged in successfully.", data: token });
+  } catch (error) {
+    next(error);
   }
-  const user = await AuthService.findUserWithPassword({ email, phone });
-
-  if (!(user && (await bcrypt.compare(password, user.password)))) {
-    return res.status(404).json({ message: "Invalid credentials" });
-  }
-
-  const token = createSecretToken(user._id);
-  res.cookie("token", token, {
-    //maxAge: 900000, // Cookie expires in 15 minutes
-    httpOnly: false, // Make it accessible to client-side code
-    secure: false, // Set to true if using HTTPS
-    sameSite: "Lax",
-    // domain: "localhost:3000", // Set your domain here
-    path: "/", // Cookie is accessible from all paths
-    expires: new Date(Date.now() + 86400000), // Cookie expires in 1 day
-    // secure: true, // Cookie will only be sent over HTTPS
-    // httpOnly: false, // Cookie cannot be accessed via client-side scripts
-    // sameSite: "None",
-  });
-
-  return res
-    .status(200)
-    .json({ message: "User logged in successfully.", data: token });
 };
 
 module.exports.logout = async (req, res) => {
