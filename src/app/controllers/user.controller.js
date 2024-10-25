@@ -4,7 +4,16 @@ const IUser = require(`../interfaces/user.interface`);
 
 const bcrypt = require("bcrypt");
 const { SALT } = require("../../config/keys");
-
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get a list of users
+ *     description: Retrieve a list of users from the database.
+ *     responses:
+ *       200:
+ *         description: Successful response with a list of users.
+ */
 module.exports.findAllUser = async (req, res, next) => {
   try {
     const data = await UserService.findAllUser({});
@@ -85,6 +94,57 @@ module.exports.deleteUser = async (req, res, next) => {
     return res.status(500).json({
       error,
       error: "User deletion failed",
+    });
+  }
+};
+
+module.exports.upload = async (req, res, next) => {
+  console.log("controller", req.file);
+  return;
+  try {
+    const _id = req.params.id;
+    const data = await UserService.deleteUser(_id);
+    if (data) {
+      return res.status(200).json({
+        data,
+        message: "User deleted successfully",
+      });
+    } else {
+      return res.status(404).json({
+        data,
+        message: "User does not exist",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error,
+      error: "User deletion failed",
+    });
+  }
+};
+
+module.exports.filterUser = async (req, res, next) => {
+  try {
+    const { page, limit, ...filterData } = req.body;
+
+    console.log("controller", filterData);
+    // return;
+    const data = await UserService.filterUser(filterData, page, limit);
+    if (data) {
+      return res.status(200).json({
+        data,
+        message: "User filtered successfully",
+      });
+    } else {
+      return res.status(404).json({
+        data,
+        message: "User does not exist",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error,
+      error: "Unable to find User",
     });
   }
 };

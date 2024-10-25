@@ -26,7 +26,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true, limit: "500mb" }));
+app.use(express.urlencoded({ extended: false, limit: "500mb" }));
 
 app.use(cookieParser());
 
@@ -35,8 +35,9 @@ setupSwaggerDocs(app);
 start();
 
 app.use("/auth", authRoutes);
+
 app.use("/user", userRoutes);
-app.get("/events", sseRoutes);
+app.use("/events", sseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");

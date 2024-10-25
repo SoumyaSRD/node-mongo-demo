@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const { dynamicSearch } = require("./common.service");
 
 module.exports.findAllUser = async () => {
   return await User.find({});
@@ -26,3 +27,6 @@ module.exports.findUser = async (user) => {
 module.exports.deleteUser = async (_id) => {
   return await User.findByIdAndDelete(_id);
 };
+
+module.exports.filterUser = (searchParams, page, limit) =>
+  dynamicSearch(User, searchParams, page, limit);
