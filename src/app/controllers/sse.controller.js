@@ -2,6 +2,8 @@ const { Worker } = require("worker_threads");
 const path = require("path");
 
 module.exports.sseEvents = async (req, res) => {
+  console.log(req.file);
+
   // Uncomment if you need to check for file upload
   // if (!req.file) {
   //   return res.status(400).send("No file uploaded.");

@@ -18,7 +18,7 @@ DefaultRouter.use("/events", sseRoutes);
 
 DefaultRouter.use("/department", departmentRoutes);
 
-DefaultRouter.use("/", (req, res) => {
+DefaultRouter.use("/", (req, res, next) => {
   res.send("Welcome to Hell");
 });
 

@@ -34,9 +34,11 @@ parentPort.on("message", async (message) => {
             acc[`column${index}`] = cell;
             return acc;
           }, {});
+
           jsonData.push(rowObject);
         }
       );
+      console.log("jsonData", jsonData);
 
       // console.log("jsonData", jsonData);
 

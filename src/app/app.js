@@ -12,7 +12,7 @@ const cors = require(`cors`);
 
 const DefaultRouter = require(`../routes/default.routes`);
 
-const errorHandler = require("./helpers/dbErrors.hepler");
+const errorHandler = require("../middlewares/Error/dbErrors.hepler");
 
 const corsOptions = {
   origin: "*", // Allow only this origin,

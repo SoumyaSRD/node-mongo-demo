@@ -1,4 +1,6 @@
 const UserService = require("../services/user.service");
+const { Worker } = require("worker_threads");
+const path = require("path");
 
 const IUser = require(`../interfaces/user.interface`);
 
@@ -78,25 +80,42 @@ module.exports.deleteUser = async (req, res, next) => {
 };
 
 module.exports.upload = async (req, res, next) => {
-  console.log("controller", req.file);
-  return;
-  try {
-    const _id = req.params.id;
-    const data = await UserService.deleteUser(_id);
-    if (data) {
-      return res.status(200).json({
-        data,
-        message: "User deleted successfully",
-      });
-    } else {
-      return res.status(404).json({
-        data,
-        message: "User does not exist",
-      });
+  const workerPath = path.join(__dirname, "../workers/excelWorker.js");
+  const worker = new Worker(workerPath, {
+    workerData: { filePath: req.file },
+  });
+
+  // Set headers for SSE
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  worker.on("message", (data) => {
+    if (data.action === "read") {
+      res.write(`data: ${JSON.stringify(data.data)}\n\n`);
+    } else if (data.action === "write") {
+      res.write(`data: ${JSON.stringify({ status: "success" })}\n\n`);
+    } else if (data.action === "error") {
+      res.write(`data: ${JSON.stringify({ error: data.error })}\n\n`);
     }
-  } catch (error) {
-    next(error);
-  }
+  });
+
+  worker.on("error", (error) => {
+    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+  });
+
+  worker.on("exit", (code) => {
+    if (code !== 0) {
+      res.write(
+        `data: ${JSON.stringify({
+          error: `Worker stopped with exit code ${code}`,
+        })}\n\n`
+      );
+    }
+    res.end();
+  });
+
+  worker.postMessage({ action: "read" });
 };
 
 module.exports.filterUser = async (req, res, next) => {
