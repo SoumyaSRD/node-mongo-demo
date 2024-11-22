@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 module.exports.createUser = async (req, res, next) => {
   try {
     const user = new IUser(req.body);
+    console.log(user);
 
     const hashedPassword = await bcrypt.hash(req.body.password, +SALT);
     user.password = hashedPassword;
@@ -44,7 +45,7 @@ module.exports.login = async (req, res, next) => {
       return res.status(404).json({ message: "Invalid credentials" });
     }
 
-    const token = createSecretToken(user._id);
+    const token = createSecretToken(user);
     res.cookie("token", token, {
       //maxAge: 900000, // Cookie expires in 15 minutes
       httpOnly: false, // Make it accessible to client-side code

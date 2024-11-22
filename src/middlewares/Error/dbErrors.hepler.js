@@ -22,7 +22,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.code && err.code === 11000) {
+  if (err?.code && err.code === 11000) {
     // Handle Mongoose duplicate key error
     return res.status(409).json({
       statusCode: 409,

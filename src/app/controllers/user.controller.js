@@ -125,6 +125,7 @@ module.exports.filterUser = async (req, res, next) => {
     console.log("controller", filterData);
     // return;
     const data = await UserService.filterUser(filterData, page, limit);
+    console.log(">>>", data);
     if (data) {
       return res.status(200).json({
         data,

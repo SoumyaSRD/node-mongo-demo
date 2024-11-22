@@ -14,6 +14,7 @@ module.exports.dynamicSearch = async (
 
     return acc;
   }, {});
+  console.log("query", query);
 
   const skip = (page - 1) * limit;
 
@@ -44,6 +45,7 @@ module.exports.dynamicSearch = async (
     },
   ];
 
+  console.log("pipeline", pipeline);
   const results = await Model.aggregate(pipeline);
 
   return {

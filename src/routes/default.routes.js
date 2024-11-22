@@ -7,12 +7,13 @@ const authRoutes = require(`./auth.routes`);
 const sseRoutes = require(`./sse.routes`);
 
 const departmentRoutes = require("./department.routes");
+const authenticateJWT = require("../middlewares/auth/jwt.middleware");
 
 const DefaultRouter = express();
 
 DefaultRouter.use("/auth", authRoutes);
 
-DefaultRouter.use("/user", userRoutes);
+DefaultRouter.use("/user", authenticateJWT, userRoutes);
 
 DefaultRouter.use("/events", sseRoutes);
 
