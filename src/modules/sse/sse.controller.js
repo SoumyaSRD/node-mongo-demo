@@ -2,25 +2,16 @@ const { Worker } = require("worker_threads");
 const path = require("path");
 
 module.exports.sseEvents = async (req, res) => {
-  console.log(req.file);
-
-  // Uncomment if you need to check for file upload
-  // if (!req.file) {
-  //   return res.status(400).send("No file uploaded.");
-  // }
-
   const filePath = path.join(
     __dirname,
     "../../../uploads/Inventory-Records-Sample-Data.xlsx"
   );
-  console.log("filePath", filePath);
 
-  const workerPath = path.join(__dirname, "../workers/excelWorker.js");
+  const workerPath = path.join(__dirname, "../../app/workers/excelWorker.js");
   const worker = new Worker(workerPath, {
     workerData: { filePath },
   });
 
-  // Set headers for SSE
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");

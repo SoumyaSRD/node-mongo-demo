@@ -42,7 +42,7 @@ parentPort.on("message", async (message) => {
 
       // console.log("jsonData", jsonData);
 
-      parentPort.postMessage({ action: "read", data });
+      parentPort.postMessage({ action: "read", data: jsonData });
     } else if (message.action === "write") {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Sheet 1");

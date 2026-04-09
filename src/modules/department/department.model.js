@@ -5,7 +5,7 @@ const DepartmentSchema = mongoose.Schema(
     name: {
       type: String,
       required: [true, "Name is required"],
-      unique: "Role already exists", // Custom error message
+      unique: "Role already exists",
     },
     role: {
       type: String,

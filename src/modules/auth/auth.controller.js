@@ -1,27 +1,18 @@
+const bcrypt = require("bcrypt");
+
 const { SALT } = require("../../config/keys");
 const { createSecretToken } = require("../../middlewares/auth/auth.middleware");
-const IUser = require("../interfaces/user.interface");
-const AuthService = require("../services/auth.service");
-const bcrypt = require("bcrypt");
+const IUser = require("../user/user.interface");
+const AuthService = require("./auth.service");
 
 module.exports.createUser = async (req, res, next) => {
   try {
     const user = new IUser(req.body);
-    console.log(user);
 
-    const hashedPassword = await bcrypt.hash(req.body.password, +SALT);
+    const hashedPassword = await bcrypt.hash(req.body.password, Number(SALT));
     user.password = hashedPassword;
 
-    // let existUser = await AuthService.findUserWithPassword(user);
-
-    // if (existUser) {
-    //   return res.status(409).json({
-    //     statusCode: 409,
-    //     message: `User already exists`,
-    //   });
-    // }
-
-    let data = await AuthService.createUser(user);
+    const data = await AuthService.createUser(user);
 
     return res.status(200).json({
       statusCode: 200,
@@ -39,6 +30,7 @@ module.exports.login = async (req, res, next) => {
     if (!((email || phone) && password)) {
       return res.status(400).json({ message: "All input is required" });
     }
+
     const user = await AuthService.findUserWithPassword({ email, phone });
 
     if (!(user && (await bcrypt.compare(password, user.password)))) {
@@ -46,17 +38,14 @@ module.exports.login = async (req, res, next) => {
     }
 
     const token = createSecretToken(user);
+
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
-      //maxAge: 900000, // Cookie expires in 15 minutes
-      httpOnly: false, // Make it accessible to client-side code
-      secure: false, // Set to true if using HTTPS
-      sameSite: "Lax",
-      // domain: "localhost:3000", // Set your domain here
-      path: "/", // Cookie is accessible from all paths
-      expires: new Date(Date.now() + 86400000), // Cookie expires in 1 day
-      // secure: true, // Cookie will only be sent over HTTPS
-      // httpOnly: false, // Cookie cannot be accessed via client-side scripts
-      // sameSite: "None",
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "Strict" : "Lax",
+      path: "/",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     return res
@@ -68,10 +57,15 @@ module.exports.login = async (req, res, next) => {
 };
 
 module.exports.logout = async (req, res) => {
-  const cookies = req.cookies;
-  for (let cookie in cookies) {
-    res.clearCookie(cookie);
-  }
+  const isProd = process.env.NODE_ENV === "production";
+
+  // Explicitly clear known auth cookie with same attributes.
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "Strict" : "Lax",
+    path: "/",
+  });
 
   return res
     .status(200)

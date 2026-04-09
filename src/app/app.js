@@ -10,14 +10,26 @@ const setupSwaggerDocs = require("../middlewares/swagger/swagger.middleware");
 
 const cors = require(`cors`);
 
-const DefaultRouter = require(`../routes/default.routes`);
+const routes = require(`../routes`);
 
 const errorHandler = require("../middlewares/Error/dbErrors.hepler");
 
+const corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim())
+  : ["*"];
+
 const corsOptions = {
-  origin: "*", // Allow only this origin,
-  credentials: true,
-  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  origin:
+    corsOrigins.length === 1 && corsOrigins[0] === "*"
+      ? "*"
+      : (origin, callback) => {
+          // Allow non-browser clients (no origin) + allowlisted origins
+          if (!origin) return callback(null, true);
+          if (corsOrigins.includes(origin)) return callback(null, true);
+          return callback(new Error("Not allowed by CORS"));
+        },
+  credentials: !(corsOrigins.length === 1 && corsOrigins[0] === "*"),
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -32,7 +44,7 @@ setupSwaggerDocs(app);
 
 start();
 
-app.use("/", DefaultRouter);
+app.use("/", routes);
 
 app.use(errorHandler);
 

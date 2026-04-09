@@ -2,7 +2,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const swaggerOptions = {
-  swaggerDefinition: {
+  definition: {
     openapi: "3.0.0",
     info: {
       title: "My API",
@@ -14,8 +14,18 @@ const swaggerOptions = {
     //     url: 'http://localhost:3000',
     //   },
     // ],
+    servers: [{ url: "http://localhost:5000" }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
-  apis: ["./routes/*.js"], // Path to the API docs
+  apis: ["./src/modules/**/*.routes.js", "./src/modules/**/*.controller.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
