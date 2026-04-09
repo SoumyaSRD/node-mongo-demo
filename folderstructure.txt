@@ -1,31 +1,75 @@
 /project-root
-  /src
-    /controllers
-      userController.js
-      authController.js
-    /models
-      userModel.js
-    /routes
-      userRoutes.js
-      authRoutes.js
-    /services
-      userService.js
-      authService.js
-    /middlewares
-      authMiddleware.js
-    /config
-      dbConfig.js
-    /utils
-      jwtUtils.js
-      responseUtils.js
-  /tests
-    /controllers
-      userController.test.js
-    /models
-      userModel.test.js
-  /public
-  /views
-  /logs
-  app.js
   package.json
+  tsconfig.json
   .env
+  README.md
+  /dist                  # Compiled JS output (build)
+  /logs                  # Application logs
+  /uploads               # File uploads
+
+  /src
+    index.ts             # Clustered HTTP server entry
+
+    /app
+      app.ts             # Express app wiring (middleware, routes, error handling)
+      /services
+        common.service.ts
+      /workers
+        excelWorker.ts
+
+    /config
+      keys.ts            # env loading + PORT/MONGO_URI/SALT/TOKEN_KEY
+      db.config.ts       # mongoose connection bootstrap
+
+    /routes
+      index.ts           # Aggregates feature routers
+
+    /modules
+      /auth
+        auth.controller.ts
+        auth.routes.ts
+        auth.service.impl.ts
+        auth.service.interface.ts
+        auth.usecase.ts
+
+      /user
+        user.controller.ts
+        user.routes.ts
+        user.service.impl.ts
+        user.service.interface.ts
+        user.usecase.ts
+        user.model.ts
+        user.interface.ts
+        user.repository.mongo.ts
+        user.repository.interface.ts
+
+      /department
+        department.controller.ts
+        department.routes.ts
+        department.service.impl.ts
+        department.service.interface.ts
+        department.usecase.ts
+        department.model.ts
+        department.repository.mongo.ts
+        department.repository.interface.ts
+
+      /sse
+        sse.controller.ts
+        sse.routes.ts
+
+    /middlewares
+      /auth
+        auth.middleware.ts
+        jwt.middleware.ts
+      /Error
+        dbErrors.helper.ts
+        customError.middleware.ts
+      /file
+        fileUpload.ts
+      /logger
+        custom.logger.ts
+      /swagger
+        swagger.middleware.ts
+
+    /types
+      express.d.ts       # Express Request extensions (e.g. req.user)

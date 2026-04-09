@@ -21,6 +21,8 @@ coverage
 node_modules/
 jspm_packages/
 uploads/
+dist/
+logs/
 
 # TypeScript cache
 *.tsbuildinfo
@@ -38,7 +40,8 @@ uploads/
 *.tgz
 
 # dotenv environment variables file
-# .env
+.env
+.env.*
 
 # Visual Studio Code files
 .vscode/
@@ -48,6 +51,11 @@ uploads/
 
 # IDE and editor directories and files
 .idea/
+/.cursor/
+.fleet/
+.history/
+.turbo/
+*.code-workspace
 *.suo
 *.ntvs*
 *.njsproj
